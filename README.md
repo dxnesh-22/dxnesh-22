@@ -156,8 +156,7 @@ Always experimenting, learning, and building something new.
 
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/dxnesh-22/dxnesh-22/output/github-contribution-grid-snake-dark.svg" alt="GitHub Contribution Snake" />
-
+<img src="https://raw.githubusercontent.com/dxnesh-22/dxnesh-22/gh-pages/github-contribution-grid-snake-dark.svg" alt="GitHub Contribution Snake" />
 </div>
 
 ---
