@@ -96,7 +96,7 @@ font-weight="bold" fill="#FFFFFF">
 
 <text x="340" y="181" font-family="Arial" font-size="25"
 font-weight="bold" fill="#FFFFFF">
-20
+23
 </text>
 
 <text x="70" y="243" font-family="Arial" font-size="14" fill="#9CCEFF">
@@ -105,7 +105,7 @@ font-weight="bold" fill="#FFFFFF">
 
 <text x="70" y="271" font-family="Arial" font-size="25"
 font-weight="bold" fill="#FFFFFF">
-25
+28
 </text>
 
 <text x="340" y="243" font-family="Arial" font-size="14" fill="#9CCEFF">
@@ -162,7 +162,7 @@ font-family="Arial"
 font-size="42"
 font-weight="bold"
 fill="#FFFFFF">
-25
+28
 </text>
 
 <text x="735" y="258"
