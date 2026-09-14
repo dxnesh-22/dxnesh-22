@@ -34,10 +34,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python scripts/generate_activity.py
 
-      - name: Commit generated stats
+      - name: Commit generated stats and activity
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add profile/github-stats.svg
-          git diff --cached --quiet || git commit -m "Update GitHub stats"
+          git add profile/github-stats.svg profile/activity.svg
+          git diff --cached --quiet || git commit -m "Update GitHub stats and activity"
           git push
