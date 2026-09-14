@@ -165,10 +165,9 @@ Always experimenting, learning, and building something new.
 
 <div align="center">
 
-<img src="https://github-readme-activity-graph.vercel.app/graph?username=dxnesh-22&theme=tokyo-night&hide_border=true" />
+<img src="profile/activity.svg" alt="Dinesh's GitHub Activity" />
 
 </div>
-
 ---
 
 ## 💡 Developer Philosophy
