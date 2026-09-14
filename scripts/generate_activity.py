@@ -41,292 +41,459 @@ response.raise_for_status()
 data = response.json()["data"]["user"]["contributionsCollection"]["contributionCalendar"]
 
 total = data["totalContributions"]
+weeks = data["weeks"]
 
-days = []
+# --------------------------------------------------
+# CARD DIMENSIONS
+# --------------------------------------------------
 
-for week in data["weeks"]:
+WIDTH = 900
+HEIGHT = 430
+
+LEFT = 55
+TOP = 145
+
+CELL = 12
+GAP = 3
+
+# 53 weeks maximum
+GRAPH_WIDTH = 53 * (CELL + GAP)
+
+# --------------------------------------------------
+# COLORS
+# --------------------------------------------------
+
+BACKGROUND = "#061326"
+GLASS = "#0A2544"
+BORDER = "#168CFF"
+
+EMPTY = "#0B1729"
+LEVEL_1 = "#12345A"
+LEVEL_2 = "#155A91"
+LEVEL_3 = "#1689D4"
+LEVEL_4 = "#28C7FF"
+
+# Find maximum contribution count
+all_counts = []
+
+for week in weeks:
     for day in week["contributionDays"]:
-        days.append({
-            "date": day["date"],
-            "count": day["contributionCount"]
-        })
+        all_counts.append(day["contributionCount"])
 
-# Keep approximately one year of contributions
-days = days[-371:]
-
-# Contribution intensity
-max_count = max([d["count"] for d in days], default=1)
+max_count = max(all_counts, default=1)
 
 
 def get_color(count):
     if count == 0:
-        return "#0B1729"
-    elif count <= max_count * 0.20:
-        return "#12345A"
-    elif count <= max_count * 0.40:
-        return "#155A91"
-    elif count <= max_count * 0.65:
-        return "#1689D4"
+        return EMPTY
+
+    if max_count <= 1:
+        return LEVEL_4
+
+    ratio = count / max_count
+
+    if ratio <= 0.20:
+        return LEVEL_1
+    elif ratio <= 0.40:
+        return LEVEL_2
+    elif ratio <= 0.65:
+        return LEVEL_3
     else:
-        return "#28C7FF"
+        return LEVEL_4
 
 
-# SVG dimensions
-WIDTH = 1100
-HEIGHT = 500
+# --------------------------------------------------
+# SVG START
+# --------------------------------------------------
 
-left = 80
-top = 170
-
-cell = 18
-gap = 4
-
-svg = f"""<svg width="{WIDTH}" height="{HEIGHT}"
+svg = f"""<svg
+width="{WIDTH}"
+height="{HEIGHT}"
 viewBox="0 0 {WIDTH} {HEIGHT}"
 xmlns="http://www.w3.org/2000/svg">
 
 <defs>
 
-  <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0%" stop-color="#061326"/>
-    <stop offset="50%" stop-color="#0A1E38"/>
-    <stop offset="100%" stop-color="#040C18"/>
-  </linearGradient>
+    <linearGradient id="background"
+        x1="0" y1="0"
+        x2="1" y2="1">
 
-  <linearGradient id="border" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0%" stop-color="#008CFF"/>
-    <stop offset="50%" stop-color="#36C7FF"/>
-    <stop offset="100%" stop-color="#0066FF"/>
-  </linearGradient>
+        <stop offset="0%" stop-color="#061326"/>
+        <stop offset="50%" stop-color="#0A1E38"/>
+        <stop offset="100%" stop-color="#040C18"/>
 
-  <filter id="glow">
-    <feGaussianBlur stdDeviation="5" result="blur"/>
-    <feMerge>
-      <feMergeNode in="blur"/>
-      <feMergeNode in="SourceGraphic"/>
-    </feMerge>
-  </filter>
+    </linearGradient>
+
+    <linearGradient id="border"
+        x1="0" y1="0"
+        x2="1" y2="0">
+
+        <stop offset="0%" stop-color="#008CFF"/>
+        <stop offset="50%" stop-color="#36C7FF"/>
+        <stop offset="100%" stop-color="#0066FF"/>
+
+    </linearGradient>
+
+    <filter id="glow">
+
+        <feGaussianBlur
+            stdDeviation="5"
+            result="blur"/>
+
+        <feMerge>
+
+            <feMergeNode in="blur"/>
+            <feMergeNode in="SourceGraphic"/>
+
+        </feMerge>
+
+    </filter>
 
 </defs>
 
 <!-- Background -->
-<rect width="{WIDTH}" height="{HEIGHT}"
-rx="28"
-fill="url(#background)"/>
+
+<rect
+    width="{WIDTH}"
+    height="{HEIGHT}"
+    rx="24"
+    fill="url(#background)"/>
+
 
 <!-- Decorative glow -->
-<circle cx="80" cy="40" r="150"
-fill="#008CFF"
-opacity="0.08"/>
 
-<circle cx="1030" cy="450" r="180"
-fill="#0066FF"
-opacity="0.08"/>
+<circle
+    cx="70"
+    cy="30"
+    r="130"
+    fill="#008CFF"
+    opacity="0.08"/>
+
+<circle
+    cx="850"
+    cy="390"
+    r="150"
+    fill="#0066FF"
+    opacity="0.07"/>
+
 
 <!-- Glass border -->
-<rect x="7" y="7"
-width="{WIDTH-14}"
-height="{HEIGHT-14}"
-rx="25"
-fill="none"
-stroke="url(#border)"
-stroke-width="2"
-filter="url(#glow)"/>
+
+<rect
+    x="6"
+    y="6"
+    width="{WIDTH - 12}"
+    height="{HEIGHT - 12}"
+    rx="22"
+    fill="none"
+    stroke="url(#border)"
+    stroke-width="2"
+    filter="url(#glow)"/>
+
 
 <!-- Title -->
-<text x="45" y="65"
-font-family="Arial, sans-serif"
-font-size="30"
-font-weight="bold"
-fill="#EAF6FF">
-📈 My GitHub Activity
+
+<text
+    x="40"
+    y="55"
+    font-family="Arial, sans-serif"
+    font-size="27"
+    font-weight="bold"
+    fill="#EAF6FF">
+
+    📈 My GitHub Activity
+
 </text>
 
-<text x="45" y="95"
-font-family="Arial, sans-serif"
-font-size="15"
-fill="#75BFFF">
-A visual representation of my contributions over time
+
+<text
+    x="40"
+    y="82"
+    font-family="Arial, sans-serif"
+    font-size="13"
+    fill="#75BFFF">
+
+    A visual representation of my contributions over time
+
 </text>
 
-<!-- Quote glass -->
-<rect x="750" y="38"
-width="300"
-height="75"
-rx="18"
-fill="#0A2544"
-fill-opacity="0.65"
-stroke="#126AC0"/>
 
-<text x="775" y="68"
-font-family="Arial"
-font-size="13"
-font-style="italic"
-fill="#8FD5FF">
-"Consistency compounds."
+<!-- Quote -->
+
+<rect
+    x="640"
+    y="30"
+    width="220"
+    height="65"
+    rx="16"
+    fill="#0A2544"
+    fill-opacity="0.65"
+    stroke="#126AC0"/>
+
+
+<text
+    x="660"
+    y="58"
+    font-family="Arial"
+    font-size="11"
+    font-style="italic"
+    fill="#9BD9FF">
+
+    "Consistency compounds."
+
 </text>
 
-<text x="900" y="94"
-font-family="Arial"
-font-size="12"
-fill="#5DBBFF">
-— Dinesh N.
+
+<text
+    x="760"
+    y="80"
+    font-family="Arial"
+    font-size="10"
+    fill="#5DBBFF">
+
+    — Dinesh N.
+
 </text>
 """
 
-# Month labels
-months = {}
 
-for index, day in enumerate(days):
-    date = datetime.strptime(day["date"], "%Y-%m-%d")
+# --------------------------------------------------
+# MONTH LABELS
+# --------------------------------------------------
 
-    week_index = index // 7
+seen_months = set()
 
-    if date.day <= 7:
-        months[date.strftime("%b")] = week_index
+for week_index, week in enumerate(weeks):
 
-for month, week_index in months.items():
+    if not week["contributionDays"]:
+        continue
 
-    x = left + week_index * (cell + gap)
+    first_date = datetime.strptime(
+        week["contributionDays"][0]["date"],
+        "%Y-%m-%d"
+    )
 
-    svg += f"""
-    <text x="{x}" y="{top - 25}"
-    font-family="Arial"
-    font-size="13"
-    fill="#8FBDE5">
-    {month}
-    </text>
-    """
+    month = first_date.strftime("%b")
 
-# Weekday labels
+    if month not in seen_months:
+
+        x = LEFT + week_index * (CELL + GAP)
+
+        # Don't allow the label to go outside the card
+        if x < WIDTH - 40:
+
+            svg += f"""
+            <text
+                x="{x}"
+                y="{TOP - 20}"
+                font-family="Arial"
+                font-size="11"
+                fill="#8FBDE5">
+
+                {month}
+
+            </text>
+            """
+
+            seen_months.add(month)
+
+
+# --------------------------------------------------
+# WEEKDAY LABELS
+# --------------------------------------------------
+
 weekday_labels = {
-    0: "Mon",
-    2: "Wed",
-    4: "Fri"
+    1: "Mon",
+    3: "Wed",
+    5: "Fri"
 }
 
 for row, label in weekday_labels.items():
 
-    y = top + row * (cell + gap) + 13
+    y = TOP + row * (CELL + GAP) + 10
 
     svg += f"""
-    <text x="35" y="{y}"
-    font-family="Arial"
-    font-size="12"
-    fill="#8FBDE5">
-    {label}
+    <text
+        x="12"
+        y="{y}"
+        font-family="Arial"
+        font-size="10"
+        fill="#8FBDE5">
+
+        {label}
+
     </text>
     """
 
-# Contribution cells
-for index, day in enumerate(days):
 
-    week = index // 7
-    row = index % 7
+# --------------------------------------------------
+# CONTRIBUTION GRID
+# --------------------------------------------------
 
-    x = left + week * (cell + gap)
-    y = top + row * (cell + gap)
+for week_index, week in enumerate(weeks):
 
-    color = get_color(day["count"])
+    for row, day in enumerate(week["contributionDays"]):
 
-    svg += f"""
-    <rect
-      x="{x}"
-      y="{y}"
-      width="{cell}"
-      height="{cell}"
-      rx="4"
-      fill="{color}"
-      stroke="#102B49"
-      stroke-width="1"/>
-    """
+        if row >= 7:
+            continue
 
-# Bottom stats
+        x = LEFT + week_index * (CELL + GAP)
+        y = TOP + row * (CELL + GAP)
+
+        color = get_color(
+            day["contributionCount"]
+        )
+
+        svg += f"""
+        <rect
+            x="{x}"
+            y="{y}"
+            width="{CELL}"
+            height="{CELL}"
+            rx="3"
+            fill="{color}"
+            stroke="#102B49"
+            stroke-width="0.7"/>
+        """
+
+
+# --------------------------------------------------
+# BOTTOM STATS
+# --------------------------------------------------
+
 svg += f"""
 
-<!-- Bottom information -->
-<circle cx="65" cy="415"
-r="22"
-fill="#0A2544"
-stroke="#168CFF"/>
+<!-- Stats -->
 
-<text x="65" y="423"
-text-anchor="middle"
-font-family="Arial"
-font-size="18"
-fill="#FFFFFF">
-★
+<circle
+    cx="55"
+    cy="350"
+    r="19"
+    fill="#0A2544"
+    stroke="#168CFF"/>
+
+<text
+    x="55"
+    y="357"
+    text-anchor="middle"
+    font-family="Arial"
+    font-size="15"
+    fill="#FFFFFF">
+
+    ★
+
 </text>
 
-<text x="100" y="413"
-font-family="Arial"
-font-size="16"
-fill="#A8D8FF">
-Total Contributions:
+
+<text
+    x="85"
+    y="347"
+    font-family="Arial"
+    font-size="13"
+    fill="#A8D8FF">
+
+    Total Contributions:
+
 </text>
 
-<text x="265" y="413"
-font-family="Arial"
-font-size="22"
-font-weight="bold"
-fill="#28C7FF">
-{total}
+
+<text
+    x="230"
+    y="350"
+    font-family="Arial"
+    font-size="20"
+    font-weight="bold"
+    fill="#28C7FF">
+
+    {total}
+
 </text>
+
 
 <!-- Legend -->
-<text x="785" y="415"
-font-family="Arial"
-font-size="13"
-fill="#8FBDE5">
-Less
+
+<text
+    x="640"
+    y="347"
+    font-family="Arial"
+    font-size="11"
+    fill="#8FBDE5">
+
+    Less
+
 </text>
 """
 
+
 legend_colors = [
-    "#0B1729",
-    "#12345A",
-    "#155A91",
-    "#1689D4",
-    "#28C7FF"
+    EMPTY,
+    LEVEL_1,
+    LEVEL_2,
+    LEVEL_3,
+    LEVEL_4
 ]
 
 for i, color in enumerate(legend_colors):
 
-    x = 830 + i * 32
+    x = 675 + i * 24
 
     svg += f"""
-    <rect x="{x}" y="399"
-    width="22"
-    height="22"
-    rx="4"
-    fill="{color}"/>
+    <rect
+        x="{x}"
+        y="335"
+        width="17"
+        height="17"
+        rx="3"
+        fill="{color}"/>
     """
+
 
 svg += """
 
-<text x="1005" y="415"
-font-family="Arial"
-font-size="13"
-fill="#8FBDE5">
-More
+<text
+    x="805"
+    y="347"
+    font-family="Arial"
+    font-size="11"
+    fill="#8FBDE5">
+
+    More
+
 </text>
 
+
 <!-- Footer -->
-<text x="550" y="465"
-text-anchor="middle"
-font-family="Arial"
-font-size="13"
-letter-spacing="4"
-fill="#168CFF">
-CODE • LEARN • BUILD • GROW
+
+<text
+    x="450"
+    y="400"
+    text-anchor="middle"
+    font-family="Arial"
+    font-size="11"
+    letter-spacing="4"
+    fill="#168CFF">
+
+    CODE • LEARN • BUILD • GROW
+
 </text>
+
 
 </svg>
 """
 
+
+# --------------------------------------------------
+# SAVE
+# --------------------------------------------------
+
 os.makedirs("profile", exist_ok=True)
 
-with open("profile/activity.svg", "w", encoding="utf-8") as f:
+with open(
+    "profile/activity.svg",
+    "w",
+    encoding="utf-8"
+) as f:
+
     f.write(svg)
 
 print("GitHub activity SVG generated successfully!")
