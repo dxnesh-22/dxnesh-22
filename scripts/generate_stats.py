@@ -181,9 +181,9 @@ Always Learning
 ⚡  Goal
 </text>
 
-<text x="340" y="361" font-family="Arial" font-size="20"
+<text x="340" y="361" font-family="Arial" font-size="17"
 font-weight="bold" fill="#FFFFFF">
-Build • Improve • Repeat
+Build • Learn • Grow
 </text>
 
 <!-- Right-side activity circle -->
