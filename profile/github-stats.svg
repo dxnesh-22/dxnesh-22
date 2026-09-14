@@ -96,7 +96,7 @@ font-weight="bold" fill="#FFFFFF">
 
 <text x="340" y="181" font-family="Arial" font-size="25"
 font-weight="bold" fill="#FFFFFF">
-12
+14
 </text>
 
 <text x="70" y="243" font-family="Arial" font-size="14" fill="#9CCEFF">
@@ -105,7 +105,7 @@ font-weight="bold" fill="#FFFFFF">
 
 <text x="70" y="271" font-family="Arial" font-size="25"
 font-weight="bold" fill="#FFFFFF">
-17
+19
 </text>
 
 <text x="340" y="243" font-family="Arial" font-size="14" fill="#9CCEFF">
@@ -130,9 +130,9 @@ Always Learning
 ⚡  Goal
 </text>
 
-<text x="340" y="361" font-family="Arial" font-size="20"
+<text x="340" y="361" font-family="Arial" font-size="17"
 font-weight="bold" fill="#FFFFFF">
-Build • Improve • Repeat
+Build • Learn • Grow
 </text>
 
 <!-- Right-side activity circle -->
@@ -162,7 +162,7 @@ font-family="Arial"
 font-size="42"
 font-weight="bold"
 fill="#FFFFFF">
-17
+19
 </text>
 
 <text x="735" y="258"
