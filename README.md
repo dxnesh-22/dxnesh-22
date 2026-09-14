@@ -146,9 +146,7 @@ Always experimenting, learning, and building something new.
 
 <div align="center">
 
-<img height="180em" src="https://github-readme-stats.vercel.app/api?username=dxnesh-22&show_icons=true&theme=tokyonight&hide_border=true&count_private=true" />
-
-<img height="180em" src="https://github-readme-stats.vercel.app/api/top-langs/?username=dxnesh-22&layout=compact&theme=tokyonight&hide_border=true" />
+![GitHub Stats](https://ghstats.dev/api/card?username=dxnesh-22&theme=tokyonight)
 
 </div>
 
