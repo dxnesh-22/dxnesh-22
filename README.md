@@ -72,7 +72,7 @@ class Dinesh:
 ### ⚙️ Tools & Platforms
 
 <p>
-<img src="https://skillicons.dev/icons?i=git,github,vscode,linux" />
+<img src="https://skillicons.dev/icons?i=git,github,vscode" />
 </p>
 
 ---
@@ -80,7 +80,7 @@ class Dinesh:
 ## 🧠 What I'm Working On
 
 * 🔥 Strengthening **Data Structures & Algorithms**
-* ☕ Improving my **Java** skills
+* ☕ Improving my **Python** skills
 * 🤖 Exploring **AI & Machine Learning**
 * 📊 Working with **Data Analysis**
 * 🌐 Building and improving **web applications**
