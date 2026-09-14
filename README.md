@@ -146,7 +146,7 @@ Always experimenting, learning, and building something new.
 
 <div align="center">
 
-![GitHub Stats](https://ghstats.dev/api/card?username=dxnesh-22&theme=tokyonight)
+<img src="https://raw.githubusercontent.com/dxnesh-22/dxnesh-22/main/profile/github-stats.svg" alt="Dinesh's GitHub Stats" />
 
 </div>
 
