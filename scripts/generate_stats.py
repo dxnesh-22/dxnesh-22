@@ -1,0 +1,244 @@
+import os
+import requests
+
+USERNAME = "dxnesh-22"
+
+query = """
+query($login: String!) {
+  user(login: $login) {
+    name
+    followers {
+      totalCount
+    }
+    repositories(ownerAffiliations: OWNER, first: 100) {
+      totalCount
+    }
+    contributionsCollection {
+      totalCommitContributions
+      restrictedContributionsCount
+      contributionCalendar {
+        totalContributions
+      }
+    }
+  }
+}
+"""
+
+token = os.environ["GITHUB_TOKEN"]
+
+response = requests.post(
+    "https://api.github.com/graphql",
+    json={
+        "query": query,
+        "variables": {"login": USERNAME}
+    },
+    headers={
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json"
+    }
+)
+
+data = response.json()["data"]["user"]
+
+name = data["name"] or USERNAME
+followers = data["followers"]["totalCount"]
+repos = data["repositories"]["totalCount"]
+commits = (
+    data["contributionsCollection"]["totalCommitContributions"]
+    + data["contributionsCollection"]["restrictedContributionsCount"]
+)
+contributions = data["contributionsCollection"]["contributionCalendar"]["totalContributions"]
+
+svg = f"""<svg width="900" height="430" viewBox="0 0 900 430"
+xmlns="http://www.w3.org/2000/svg">
+
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#071426"/>
+    <stop offset="50%" stop-color="#0B1F3A"/>
+    <stop offset="100%" stop-color="#06101F"/>
+  </linearGradient>
+
+  <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#12345C" stop-opacity="0.75"/>
+    <stop offset="100%" stop-color="#071A31" stop-opacity="0.45"/>
+  </linearGradient>
+
+  <linearGradient id="blue" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0%" stop-color="#00B7FF"/>
+    <stop offset="100%" stop-color="#6EA8FF"/>
+  </linearGradient>
+
+  <filter id="glow">
+    <feGaussianBlur stdDeviation="6" result="blur"/>
+    <feMerge>
+      <feMergeNode in="blur"/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+</defs>
+
+<!-- Background -->
+<rect width="900" height="430" rx="28" fill="url(#bg)"/>
+
+<!-- Glow -->
+<circle cx="80" cy="40" r="130" fill="#008CFF" opacity="0.10"/>
+<circle cx="830" cy="390" r="180" fill="#0066FF" opacity="0.08"/>
+
+<!-- Glass border -->
+<rect x="8" y="8" width="884" height="414" rx="25"
+fill="none"
+stroke="#168CFF"
+stroke-width="2"
+opacity="0.8"
+filter="url(#glow)"/>
+
+<!-- Header -->
+<text x="45" y="62"
+font-family="Arial, sans-serif"
+font-size="27"
+font-weight="bold"
+fill="#E8F4FF">
+{name}'s GitHub Stats
+</text>
+
+<text x="45" y="90"
+font-family="Arial, sans-serif"
+font-size="13"
+letter-spacing="4"
+fill="#36B9FF">
+CODE • LEARN • BUILD • REPEAT
+</text>
+
+<!-- Cards -->
+
+<rect x="45" y="125" width="250" height="75" rx="16"
+fill="url(#glass)" stroke="#126AC0"/>
+
+<rect x="315" y="125" width="250" height="75" rx="16"
+fill="url(#glass)" stroke="#126AC0"/>
+
+<rect x="45" y="215" width="250" height="75" rx="16"
+fill="url(#glass)" stroke="#126AC0"/>
+
+<rect x="315" y="215" width="250" height="75" rx="16"
+fill="url(#glass)" stroke="#126AC0"/>
+
+<rect x="45" y="305" width="250" height="75" rx="16"
+fill="url(#glass)" stroke="#126AC0"/>
+
+<rect x="315" y="305" width="250" height="75" rx="16"
+fill="url(#glass)" stroke="#126AC0"/>
+
+<!-- Labels -->
+
+<text x="70" y="153" font-family="Arial" font-size="14" fill="#9CCEFF">
+⭐  Public Repositories
+</text>
+
+<text x="70" y="181" font-family="Arial" font-size="25"
+font-weight="bold" fill="#FFFFFF">
+{repos}
+</text>
+
+<text x="340" y="153" font-family="Arial" font-size="14" fill="#9CCEFF">
+💻  Total Commits
+</text>
+
+<text x="340" y="181" font-family="Arial" font-size="25"
+font-weight="bold" fill="#FFFFFF">
+{commits}
+</text>
+
+<text x="70" y="243" font-family="Arial" font-size="14" fill="#9CCEFF">
+🔥  Contributions
+</text>
+
+<text x="70" y="271" font-family="Arial" font-size="25"
+font-weight="bold" fill="#FFFFFF">
+{contributions}
+</text>
+
+<text x="340" y="243" font-family="Arial" font-size="14" fill="#9CCEFF">
+👥  Followers
+</text>
+
+<text x="340" y="271" font-family="Arial" font-size="25"
+font-weight="bold" fill="#FFFFFF">
+{followers}
+</text>
+
+<text x="70" y="333" font-family="Arial" font-size="14" fill="#9CCEFF">
+🚀  Developer
+</text>
+
+<text x="70" y="361" font-family="Arial" font-size="20"
+font-weight="bold" fill="#FFFFFF">
+Always Learning
+</text>
+
+<text x="340" y="333" font-family="Arial" font-size="14" fill="#9CCEFF">
+⚡  Goal
+</text>
+
+<text x="340" y="361" font-family="Arial" font-size="20"
+font-weight="bold" fill="#FFFFFF">
+Build • Improve • Repeat
+</text>
+
+<!-- Right-side activity circle -->
+
+<circle cx="735" cy="235" r="92"
+fill="#07182E"
+stroke="#126AC0"
+stroke-width="2"/>
+
+<circle cx="735" cy="235" r="72"
+fill="none"
+stroke="#123A65"
+stroke-width="12"/>
+
+<circle cx="735" cy="235" r="72"
+fill="none"
+stroke="url(#blue)"
+stroke-width="12"
+stroke-linecap="round"
+stroke-dasharray="320 452"
+transform="rotate(-90 735 235)"
+filter="url(#glow)"/>
+
+<text x="735" y="230"
+text-anchor="middle"
+font-family="Arial"
+font-size="42"
+font-weight="bold"
+fill="#FFFFFF">
+{contributions}
+</text>
+
+<text x="735" y="258"
+text-anchor="middle"
+font-family="Arial"
+font-size="13"
+fill="#64C7FF">
+CONTRIBUTIONS
+</text>
+
+<text x="735" y="365"
+text-anchor="middle"
+font-family="Arial"
+font-size="13"
+letter-spacing="3"
+fill="#168CFF">
+KEEP BUILDING 🚀
+</text>
+
+</svg>
+"""
+
+os.makedirs("profile", exist_ok=True)
+
+with open("profile/github-stats.svg", "w", encoding="utf-8") as f:
+    f.write(svg)
+
+print("GitHub stats SVG generated successfully!")
