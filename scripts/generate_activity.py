@@ -38,14 +38,20 @@ response = requests.post(
 
 response.raise_for_status()
 
-data = response.json()["data"]["user"]["contributionsCollection"]["contributionCalendar"]
+result = response.json()
+
+if "errors" in result:
+    raise Exception(result["errors"])
+
+data = result["data"]["user"]["contributionsCollection"]["contributionCalendar"]
 
 total = data["totalContributions"]
 weeks = data["weeks"]
 
-# --------------------------------------------------
+
+# ==================================================
 # CARD DIMENSIONS
-# --------------------------------------------------
+# ==================================================
 
 WIDTH = 900
 HEIGHT = 430
@@ -56,15 +62,12 @@ TOP = 145
 CELL = 12
 GAP = 3
 
-# 53 weeks maximum
-GRAPH_WIDTH = 53 * (CELL + GAP)
 
-# --------------------------------------------------
+# ==================================================
 # COLORS
-# --------------------------------------------------
+# ==================================================
 
 BACKGROUND = "#061326"
-GLASS = "#0A2544"
 BORDER = "#168CFF"
 
 EMPTY = "#0B1729"
@@ -73,7 +76,11 @@ LEVEL_2 = "#155A91"
 LEVEL_3 = "#1689D4"
 LEVEL_4 = "#28C7FF"
 
-# Find maximum contribution count
+
+# ==================================================
+# FIND MAX CONTRIBUTION COUNT
+# ==================================================
+
 all_counts = []
 
 for week in weeks:
@@ -84,6 +91,7 @@ max_count = max(all_counts, default=1)
 
 
 def get_color(count):
+
     if count == 0:
         return EMPTY
 
@@ -94,17 +102,20 @@ def get_color(count):
 
     if ratio <= 0.20:
         return LEVEL_1
+
     elif ratio <= 0.40:
         return LEVEL_2
+
     elif ratio <= 0.65:
         return LEVEL_3
+
     else:
         return LEVEL_4
 
 
-# --------------------------------------------------
+# ==================================================
 # SVG START
-# --------------------------------------------------
+# ==================================================
 
 svg = f"""<svg
 width="{WIDTH}"
@@ -114,25 +125,55 @@ xmlns="http://www.w3.org/2000/svg">
 
 <defs>
 
-    <linearGradient id="background"
-        x1="0" y1="0"
-        x2="1" y2="1">
+    <!-- Background gradient -->
 
-        <stop offset="0%" stop-color="#061326"/>
-        <stop offset="50%" stop-color="#0A1E38"/>
-        <stop offset="100%" stop-color="#040C18"/>
+    <linearGradient
+        id="background"
+        x1="0"
+        y1="0"
+        x2="1"
+        y2="1">
+
+        <stop
+            offset="0%"
+            stop-color="#061326"/>
+
+        <stop
+            offset="50%"
+            stop-color="#0A1E38"/>
+
+        <stop
+            offset="100%"
+            stop-color="#040C18"/>
 
     </linearGradient>
 
-    <linearGradient id="border"
-        x1="0" y1="0"
-        x2="1" y2="0">
 
-        <stop offset="0%" stop-color="#008CFF"/>
-        <stop offset="50%" stop-color="#36C7FF"/>
-        <stop offset="100%" stop-color="#0066FF"/>
+    <!-- Blue border -->
+
+    <linearGradient
+        id="border"
+        x1="0"
+        y1="0"
+        x2="1"
+        y2="0">
+
+        <stop
+            offset="0%"
+            stop-color="#008CFF"/>
+
+        <stop
+            offset="50%"
+            stop-color="#36C7FF"/>
+
+        <stop
+            offset="100%"
+            stop-color="#0066FF"/>
 
     </linearGradient>
+
+
+    <!-- Glow -->
 
     <filter id="glow">
 
@@ -142,8 +183,11 @@ xmlns="http://www.w3.org/2000/svg">
 
         <feMerge>
 
-            <feMergeNode in="blur"/>
-            <feMergeNode in="SourceGraphic"/>
+            <feMergeNode
+                in="blur"/>
+
+            <feMergeNode
+                in="SourceGraphic"/>
 
         </feMerge>
 
@@ -151,7 +195,10 @@ xmlns="http://www.w3.org/2000/svg">
 
 </defs>
 
-<!-- Background -->
+
+<!-- ==================================================
+     BACKGROUND
+     ================================================== -->
 
 <rect
     width="{WIDTH}"
@@ -160,7 +207,7 @@ xmlns="http://www.w3.org/2000/svg">
     fill="url(#background)"/>
 
 
-<!-- Decorative glow -->
+<!-- Decorative blue glow -->
 
 <circle
     cx="70"
@@ -168,6 +215,7 @@ xmlns="http://www.w3.org/2000/svg">
     r="130"
     fill="#008CFF"
     opacity="0.08"/>
+
 
 <circle
     cx="850"
@@ -177,7 +225,9 @@ xmlns="http://www.w3.org/2000/svg">
     opacity="0.07"/>
 
 
-<!-- Glass border -->
+<!-- ==================================================
+     GLASS BORDER
+     ================================================== -->
 
 <rect
     x="6"
@@ -191,7 +241,9 @@ xmlns="http://www.w3.org/2000/svg">
     filter="url(#glow)"/>
 
 
-<!-- Title -->
+<!-- ==================================================
+     TITLE
+     ================================================== -->
 
 <text
     x="40"
@@ -218,7 +270,9 @@ xmlns="http://www.w3.org/2000/svg">
 </text>
 
 
-<!-- Quote -->
+<!-- ==================================================
+     QUOTE GLASS PANEL
+     ================================================== -->
 
 <rect
     x="640"
@@ -257,10 +311,11 @@ xmlns="http://www.w3.org/2000/svg">
 """
 
 
-# --------------------------------------------------
+# ==================================================
 # MONTH LABELS
-# --------------------------------------------------
+# ==================================================
 
+# Track months already displayed
 seen_months = set()
 
 for week_index, week in enumerate(weeks):
@@ -268,39 +323,50 @@ for week_index, week in enumerate(weeks):
     if not week["contributionDays"]:
         continue
 
-    first_date = datetime.strptime(
-        week["contributionDays"][0]["date"],
+    first_day = week["contributionDays"][0]
+
+    date = datetime.strptime(
+        first_day["date"],
         "%Y-%m-%d"
     )
 
-    month = first_date.strftime("%b")
+    month = date.strftime("%b")
 
-    if month not in seen_months:
+    if month in seen_months:
+        continue
 
-        x = LEFT + week_index * (CELL + GAP)
+    seen_months.add(month)
 
-        # Don't allow the label to go outside the card
-        if x < WIDTH - 40:
+    # Month label starts at the same x position
+    # as the first contribution cell of that week.
+    x = LEFT + week_index * (CELL + GAP)
 
-            svg += f"""
-            <text
-                x="{x}"
-                y="{TOP - 20}"
-                font-family="Arial"
-                font-size="11"
-                fill="#8FBDE5">
+    # Special handling for the first month.
+    # This prevents September from touching
+    # the left edge of the SVG.
+    if week_index == 0:
+        x = LEFT
 
-                {month}
+    # Prevent labels from going beyond the card.
+    if x <= WIDTH - 45:
 
-            </text>
-            """
+        svg += f"""
+<text
+    x="{x}"
+    y="{TOP - 20}"
+    font-family="Arial, sans-serif"
+    font-size="11"
+    fill="#8FBDE5">
 
-            seen_months.add(month)
+    {month}
+
+</text>
+"""
 
 
-# --------------------------------------------------
+# ==================================================
 # WEEKDAY LABELS
-# --------------------------------------------------
+# ==================================================
 
 weekday_labels = {
     1: "Mon",
@@ -313,22 +379,22 @@ for row, label in weekday_labels.items():
     y = TOP + row * (CELL + GAP) + 10
 
     svg += f"""
-    <text
-        x="12"
-        y="{y}"
-        font-family="Arial"
-        font-size="10"
-        fill="#8FBDE5">
+<text
+    x="12"
+    y="{y}"
+    font-family="Arial, sans-serif"
+    font-size="10"
+    fill="#8FBDE5">
 
-        {label}
+    {label}
 
-    </text>
-    """
+</text>
+"""
 
 
-# --------------------------------------------------
+# ==================================================
 # CONTRIBUTION GRID
-# --------------------------------------------------
+# ==================================================
 
 for week_index, week in enumerate(weeks):
 
@@ -338,6 +404,7 @@ for week_index, week in enumerate(weeks):
             continue
 
         x = LEFT + week_index * (CELL + GAP)
+
         y = TOP + row * (CELL + GAP)
 
         color = get_color(
@@ -345,25 +412,25 @@ for week_index, week in enumerate(weeks):
         )
 
         svg += f"""
-        <rect
-            x="{x}"
-            y="{y}"
-            width="{CELL}"
-            height="{CELL}"
-            rx="3"
-            fill="{color}"
-            stroke="#102B49"
-            stroke-width="0.7"/>
-        """
+<rect
+    x="{x}"
+    y="{y}"
+    width="{CELL}"
+    height="{CELL}"
+    rx="3"
+    fill="{color}"
+    stroke="#102B49"
+    stroke-width="0.7"/>
+"""
 
 
-# --------------------------------------------------
-# BOTTOM STATS
-# --------------------------------------------------
+# ==================================================
+# TOTAL CONTRIBUTIONS
+# ==================================================
 
 svg += f"""
 
-<!-- Stats -->
+<!-- Contribution icon -->
 
 <circle
     cx="55"
@@ -371,6 +438,7 @@ svg += f"""
     r="19"
     fill="#0A2544"
     stroke="#168CFF"/>
+
 
 <text
     x="55"
@@ -385,6 +453,8 @@ svg += f"""
 </text>
 
 
+<!-- Contribution label -->
+
 <text
     x="85"
     y="347"
@@ -397,6 +467,8 @@ svg += f"""
 </text>
 
 
+<!-- Contribution number -->
+
 <text
     x="230"
     y="350"
@@ -408,9 +480,14 @@ svg += f"""
     {total}
 
 </text>
+"""
 
 
-<!-- Legend -->
+# ==================================================
+# CONTRIBUTION LEGEND
+# ==================================================
+
+svg += """
 
 <text
     x="640"
@@ -438,15 +515,19 @@ for i, color in enumerate(legend_colors):
     x = 675 + i * 24
 
     svg += f"""
-    <rect
-        x="{x}"
-        y="335"
-        width="17"
-        height="17"
-        rx="3"
-        fill="{color}"/>
-    """
+<rect
+    x="{x}"
+    y="335"
+    width="17"
+    height="17"
+    rx="3"
+    fill="{color}"/>
+"""
 
+
+# ==================================================
+# FOOTER
+# ==================================================
 
 svg += """
 
@@ -462,8 +543,6 @@ svg += """
 </text>
 
 
-<!-- Footer -->
-
 <text
     x="450"
     y="400"
@@ -471,7 +550,7 @@ svg += """
     font-family="Arial"
     font-size="11"
     letter-spacing="4"
-    fill="#168CFF">
+    fill="#1689FF">
 
     CODE • LEARN • BUILD • GROW
 
@@ -482,18 +561,24 @@ svg += """
 """
 
 
-# --------------------------------------------------
-# SAVE
-# --------------------------------------------------
+# ==================================================
+# SAVE SVG
+# ==================================================
 
-os.makedirs("profile", exist_ok=True)
+os.makedirs(
+    "profile",
+    exist_ok=True
+)
 
 with open(
     "profile/activity.svg",
     "w",
     encoding="utf-8"
-) as f:
+) as file:
 
-    f.write(svg)
+    file.write(svg)
 
-print("GitHub activity SVG generated successfully!")
+
+print(
+    "GitHub activity SVG generated successfully!"
+)
