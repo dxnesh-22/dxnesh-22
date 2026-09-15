@@ -4015,6 +4015,16 @@ xmlns="http://www.w3.org/2000/svg">
     stroke="#102B49"
     stroke-width="0.7"/>
 
+<rect
+    x="835"
+    y="175"
+    width="12"
+    height="12"
+    rx="3"
+    fill="#12345A"
+    stroke="#102B49"
+    stroke-width="0.7"/>
+
 
 <!-- Contribution icon -->
 
@@ -4063,7 +4073,7 @@ xmlns="http://www.w3.org/2000/svg">
     font-weight="bold"
     fill="#28C7FF">
 
-    28
+    29
 
 </text>
 
