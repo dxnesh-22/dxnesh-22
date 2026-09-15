@@ -1,11 +1,5 @@
 <div align="center">
 
-<img src="profile/header.svg" width="100%" alt="Dinesh N - Developer">
-
-</div>
-
-<div align="center">
-
 # 👋 Hey, I'm Dinesh N
 
 ### 💻 Computer Science Engineering Student • Developer • AI Enthusiast
