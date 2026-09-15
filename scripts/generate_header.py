@@ -243,79 +243,89 @@ xmlns="http://www.w3.org/2000/svg">
      JOURNEY
      ================================================== -->
 
-<text
-    x="300"
-    y="360"
-    text-anchor="middle"
-    font-family="Arial"
-    font-size="28"
-    fill="#28C7FF">
+<!-- ==================================================
+     SOCIAL LINKS
+     ================================================== -->
 
-    &lt;/&gt;
+<a href="YOUR_PORTFOLIO_URL">
+    <text
+        x="300"
+        y="360"
+        text-anchor="middle"
+        font-family="Arial"
+        font-size="28"
+        fill="#28C7FF">
 
-</text>
+        🌐
 
-<text
-    x="300"
-    y="385"
-    text-anchor="middle"
-    font-family="Arial"
-    font-size="13"
-    fill="#A8D8FF">
+    </text>
 
-    CODE
+    <text
+        x="300"
+        y="385"
+        text-anchor="middle"
+        font-family="Arial"
+        font-size="13"
+        fill="#A8D8FF">
 
-</text>
+        PORTFOLIO
 
-
-<text
-    x="500"
-    y="360"
-    text-anchor="middle"
-    font-family="Arial"
-    font-size="28"
-    fill="#28C7FF">
-
-    ◉
-
-</text>
-
-<text
-    x="500"
-    y="385"
-    text-anchor="middle"
-    font-family="Arial"
-    font-size="13"
-    fill="#A8D8FF">
-
-    LEARN
-
-</text>
+    </text>
+</a>
 
 
-<text
-    x="700"
-    y="360"
-    text-anchor="middle"
-    font-family="Arial"
-    font-size="28"
-    fill="#28C7FF">
+<a href="YOUR_LINKEDIN_URL">
+    <text
+        x="500"
+        y="360"
+        text-anchor="middle"
+        font-family="Arial"
+        font-size="28"
+        fill="#28C7FF">
 
-    🚀
+        💼
 
-</text>
+    </text>
 
-<text
-    x="700"
-    y="385"
-    text-anchor="middle"
-    font-family="Arial"
-    font-size="13"
-    fill="#A8D8FF">
+    <text
+        x="500"
+        y="385"
+        text-anchor="middle"
+        font-family="Arial"
+        font-size="13"
+        fill="#A8D8FF">
 
-    BUILD
+        LINKEDIN
 
-</text>
+    </text>
+</a>
+
+
+<a href="https://github.com/dxnesh-22">
+    <text
+        x="700"
+        y="360"
+        text-anchor="middle"
+        font-family="Arial"
+        font-size="28"
+        fill="#28C7FF">
+
+        🐙
+
+    </text>
+
+    <text
+        x="700"
+        y="385"
+        text-anchor="middle"
+        font-family="Arial"
+        font-size="13"
+        fill="#A8D8FF">
+
+        GITHUB
+
+    </text>
+</a>
 
 
 <!-- ==================================================
